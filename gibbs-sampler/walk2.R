@@ -30,7 +30,7 @@ gibbs=function(y,n_iter,init,prior){
     
   }
   
-  cbind(mu=mu_out,sig2=sign2_out)
+  cbind(mu=mu_out,sig2=sig2_out)
   
   
   
@@ -53,9 +53,27 @@ prior$s2_0 = 1.0
 prior$nu_0 = prior$n_0 /2.0
 prior$beta_0=prior$n_0 *prior$s2_0/2.0
 
+#data plot
 
 hist(y,freq=FALSE, xlim=c(-1.0,3.0))
 points(y,rep(0.0,n))
 points(ybar,0.0,pch=19)
 
 curve(dt(x, df=1), lty=2,  add= TRUE)
+
+
+#posterior prediction sampling
+set.seed(53)
+init=list()
+init$mu=0.0
+post=gibbs(y=y,n_iter = 1000,init=init,prior=prior)
+head(post)
+library('codo')
+
+plot(as.mcmc(post))
+summary(as.mcmc(post))
+
+autocorr.plot(as.mcmc(post))
+
+effectiveSize(as.mcmc(post))
+raftery.diag(as.mcmc(post))
