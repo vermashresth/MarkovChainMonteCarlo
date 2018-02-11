@@ -36,4 +36,24 @@ ybar=mean(y)
 n=length(y)
 print(n)
 hist(y,freq=FALSE, xlim=c(-1.0,3.0))
+points(y,rep(0.0,n))
+points(ybar,0.0,pch=19)
 
+curve(dt(x, df=1), lty=2,  add= TRUE)
+
+
+
+###posterior
+
+set.seed(43)
+post=mh(n=n,ybar=ybar,n_iter=1e3, mu_init=30.0,cand_sd=0.9)
+str(post)
+
+library("coda")
+
+traceplot(as.mcmc(post$mu))
+
+#post analysis
+post$mu_keep=post$mu[-c(1:100)]
+plot(density(post$mu_keep))
+curve(dt(x, df=1), lty=2,  add= TRUE)
